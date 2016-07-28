@@ -1,4 +1,6 @@
-## WebSockets.Pcl
+## WebSockets.Pcl + binary support for Android
+
+The code has been edited to add support for sending and receiving binary data from/to websockets
 
 WebSockets.PCL is a portable class library, profile 259, C# WebSocket implementation.
 
