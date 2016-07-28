@@ -9,6 +9,7 @@ public class BridgeProxy {
     public void  RaiseOpened    (){    }
     public void RaiseClosed     (){    }
     public void RaiseMessage    (String message){    }
+    public void RaiseData       (byte[] message){    }
     public void RaiseLog        (String message){    }
     public void RaiseError      (String message){    }
 }

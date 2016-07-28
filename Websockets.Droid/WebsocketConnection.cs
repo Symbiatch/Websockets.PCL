@@ -90,6 +90,19 @@ namespace Websockets.Droid
             }
         }
 
+        public void Send(byte[] message, int offset, int length)
+        {
+            try
+            {
+                _controller.Send(message, offset, length);
+
+            }
+            catch (Exception ex)
+            {
+                OnError(ex.Message);
+            }
+        }
+
         //
 
         public override unsafe void RaiseClosed()
@@ -115,6 +128,12 @@ namespace Websockets.Droid
         {
             OnMessage(p1);
             base.RaiseMessage(p1);
+        }
+
+        public override unsafe void RaiseData(byte[] p1)
+        {
+            OnData(p1);
+            base.RaiseData(p1);
         }
 
         public override unsafe void RaiseOpened()

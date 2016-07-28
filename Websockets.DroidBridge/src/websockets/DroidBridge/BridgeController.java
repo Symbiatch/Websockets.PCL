@@ -1,9 +1,8 @@
-
 /**
  * Created by Nicholas Ventimiglia on 11/27/2015.
  * nick@avariceonline.com
  * <p/>
- * Android Websocket bridge application. Beacause Mono Networking sucks.
+ * Android Websocket bridge application. Because Mono Networking sucks.
  * Unity talks with BridgeClient (java) and uses a C Bridge to raise events.
  * .NET Methods <-->  BridgeClient (Java / NDK) <--->  Websocket (Java)
  */
@@ -13,13 +12,17 @@ import android.os.Looper;
 import android.util.Log;
 
 //https://github.com/koush/AndroidAsync
+import com.koushikdutta.async.ByteBufferList;
+import com.koushikdutta.async.DataEmitter;
 import com.koushikdutta.async.callback.CompletedCallback;
+import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.WebSocket;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import java.security.cert.X509Certificate;
 
 
@@ -95,6 +98,16 @@ public class BridgeController {
                         RaiseMessage(s);
                     }
                 });
+
+
+                webSocket.setDataCallback(new DataCallback()
+                {
+                    public void onDataAvailable(DataEmitter emitter, ByteBufferList buffer)
+                    {
+                        RaiseData(buffer.getAllByteArray());
+                        buffer.recycle();
+                    }
+                });
             }
         });
     }
@@ -119,6 +132,17 @@ public class BridgeController {
             if(mConnection == null)
                 return;
             mConnection.send(message);
+        }catch (Exception ex){
+            RaiseError("Error Send - "+ex.getMessage());
+        }
+    }
+
+    public void Send(final byte[] message, int offset, int length) {
+        try
+        {
+            if(mConnection == null)
+                return;
+            mConnection.send(message, offset, length);
         }catch (Exception ex){
             RaiseError("Error Send - "+ex.getMessage());
         }
@@ -160,6 +184,16 @@ public class BridgeController {
         try{
             if(proxy != null)
                 proxy.RaiseMessage(message);
+        }catch(Exception ex){
+            RaiseClosed();
+            Error("Failed to Raise");
+        }
+    }
+
+    private void RaiseData(byte[] message) {
+        try{
+            if(proxy != null)
+                proxy.RaiseData(message);
         }catch(Exception ex){
             RaiseClosed();
             Error("Failed to Raise");

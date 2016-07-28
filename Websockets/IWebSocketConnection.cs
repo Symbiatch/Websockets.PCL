@@ -15,6 +15,8 @@ namespace Websockets
 
         void Send(string message);
         
+        void Send(byte[] message, int offset, int length);
+        
         event Action OnOpened;
 
         event Action OnClosed;
@@ -24,6 +26,8 @@ namespace Websockets
         event Action<string> OnError;
 
         event Action<string> OnMessage;
+
+        event Action<byte[]> OnData;
         
         event Action<string> OnLog;
     }
